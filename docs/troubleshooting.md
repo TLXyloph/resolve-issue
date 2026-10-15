@@ -33,10 +33,10 @@ Every stop carries a `stopped` code and a `reason`, except a viability stop, whi
 | Code | Cause | Fix |
 |---|---|---|
 | `recon-failed` | U2 or U3 could not read the issue, U2 reported a different issue number, or U1 could not establish a main clone and a fetched base SHA. | Check `gh auth status`, that the issue exists and is visible to you, and that the clone can fetch from GitHub. Then start a fresh run. |
-| `prior-branch-exists` | A `fix/issue-<n>` branch exists locally or on your fork outside resolve-issue's own worktree, or it backs an open PR. | Finish that branch by hand, or delete or rename it (your call), then start a fresh run. The result shows `priorBranchLog`. |
+| `prior-branch-exists` | A `fix/issue-<n>` branch exists locally or on your fork outside resolve-issue's own worktree, or it backs an open PR of yours. | Finish that branch by hand, or delete or rename it (your call), then start a fresh run. The result shows `priorBranchLog`. |
 | `worktree-failed` | W1 returned a branch or path other than `fix/issue-<n>` at `<clone>-issue-<n>`. The result shows `worktree`. | A verdict: a resume would replay it. Check `git -C <clone> worktree list` and `git -C <clone> branch --list 'fix/issue-*'`, clean up by hand, then start a fresh run. |
 | `invalid-issue-url` | The URL is not `https://github.com/<owner>/<repo>/issues/<number>`. | Pass an issue URL (not a PR or discussion URL). |
-| `bad-args` | An argument is invalid: an unknown mode, effort or gate, a malformed model name or resume map (`retryNodes`, `confirmAttempts`), an `attempts` outside 1 to 8 or a `maxAgents` outside 4 to 200 (or either not a whole number), a scope decision other than proceed or abort, or a workspace that is not an absolute path. Out-of-range numbers are rejected, not clamped. | Fix the argument the `reason` names and start again. |
+| `bad-args` | An argument is invalid: an unknown mode, effort or gate, a malformed model name or resume map (`retryNodes`, `confirmAttempts`), an `attempts` outside 1 to 8 or a `maxAgents` outside 4 to 200 (or either not a whole number), a `scopeDecisions` entry without a key or with an answer other than proceed or abort, or a workspace that is not an absolute path. Out-of-range numbers are rejected, not clamped. | Fix the argument the `reason` names and start again. |
 
 ### Validation and planning
 

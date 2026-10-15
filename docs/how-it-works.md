@@ -136,10 +136,10 @@ In triage mode the run ends here with `status: "triaged"`: a verdict (`takeable`
 
 ### `W1:worktree` and `GATE-0` (in parallel)
 
-- **`W1:worktree`** creates the worktree at the base SHA with `git worktree add --no-track -b fix/issue-<n>`. If that branch already exists, it reuses the worktree only when an earlier resolve-issue run made it and no PR from it is open. It also checks your fork for the branch. For a created or resumed worktree, it makes sure the scratch folder exists and removes any old approval token. It never resets, forces, stashes, renames or deletes anything.
+- **`W1:worktree`** creates the worktree at the base SHA with `git worktree add --no-track -b fix/issue-<n>`. If that branch already exists, it reuses the worktree only when an earlier resolve-issue run made it and no PR of yours from it is open; another contributor's PR from a branch of the same name does not count. It also checks your fork for the branch. For a created or resumed worktree, it makes sure the scratch folder exists and removes any old approval token. It never resets, forces, stashes, renames or deletes anything.
 - **`GATE-0`** reads the contribution rules at the base without checking anything out: CONTRIBUTING, AGENTS.md, CLAUDE.md, `.github/copilot-instructions.md`, the PR template, style config, changelog conventions, DCO and CLA rules, and the last 20 commit subjects. Notes in your own context (such as a memory file) are checked against the code; contradictions are reported as warnings. GATE-0 keeps running while W1 and R1 work, and the plan waits for it. If GATE-0 returns nothing, its retry runs after R1. It is told never to push, comment or write to GitHub.
 
-**Stops here:** `prior-branch-exists` (the branch exists outside resolve-issue's own worktree, or backs a PR), `worktree-failed` (W1 returned an unexpected branch or path), `agent-failed`.
+**Stops here:** `prior-branch-exists` (the branch exists outside resolve-issue's own worktree, or backs an open PR of yours), `worktree-failed` (W1 returned an unexpected branch or path), `agent-failed`.
 
 ### `R1:validate`
 
