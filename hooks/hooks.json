@@ -1,0 +1,80 @@
+{
+  "description": "resolve-issue publish guard. For 12 hours after a resolve-issue run (even a triage) starts or resumes in a session, every subagent in that session is blocked from running git push, GitHub writes (gh or gh-axi, curl, wget, hub, GitHub MCP write tools) or publishing no-mistakes runs, wherever the command runs. In a resolve-issue worktree, subagents are blocked from publishing and the main session needs a one-time approval token. A subagent's publishing command whose directory cannot be resolved, and a subagent's command past the guard's reading bounds, are blocked in every session. It reads command text, including an MCP tool's command string: defense in depth, not a sandbox (see docs/safety.md). Turn it off with the plugin's publish_guard option.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run-marker.sh\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*push*)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*git*alias*)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*gh *)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*gh-axi*)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*hub *)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*no-mistakes*)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*curl*github*)",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "if": "Bash(*wget*github*)",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/publish-guard.sh\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">resolve-issue</title>
+  <desc id="desc">resolve-issue, a Claude Code plugin. GitHub issue in. Validated pull request out. Published only when you say so. Install with /plugin install resolve-issue --marketplace TLXyloph/resolve-issue</desc>
+  <defs>
+    <linearGradient id="rail" gradientUnits="userSpaceOnUse" x1="124" y1="0" x2="1046" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="accent" gradientUnits="userSpaceOnUse" x1="76" y1="0" x2="620" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2dd4bf" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; }
+  </style>
+  <rect width="1280" height="640" fill="#0d1117"/>
+  <ellipse cx="1180" cy="60" rx="520" ry="340" fill="url(#glowB)"/>
+  <ellipse cx="60" cy="620" rx="520" ry="300" fill="url(#glowA)"/>
+  <rect x="76" y="64" width="218" height="34" rx="17" fill="#161b22" stroke="#30363d"/>
+  <text x="185" y="84" text-anchor="middle" class="mono" font-size="17" fill="#c9d1d9">Claude Code plugin</text>
+
+  <text x="72" y="206" class="sans" font-size="104" font-weight="800" letter-spacing="-2" fill="#f0f6fc">resolve-issue</text>
+  <text x="76" y="266" class="sans" font-size="34" fill="#c9d1d9">GitHub issue in. Validated pull request out.</text>
+  <text x="76" y="312" class="sans" font-size="34" font-weight="700" fill="url(#accent)">Published only when you say so.</text>
+  <line x1="124" y1="400" x2="846" y2="400" stroke="url(#rail)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="100" cy="400" r="19" fill="#0d1117" stroke="#2dd4bf" stroke-width="3"/>
+<circle cx="100" cy="400" r="5.5" fill="#2dd4bf"/>
+<text x="100" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">issue</text>
+<circle cx="230" cy="400" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M224 400.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="230" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">viable</text>
+<circle cx="350" cy="400" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M344 400.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="350" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">reproduced</text>
+<circle cx="470" cy="400" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M464 400.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="470" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">fixed</text>
+<circle cx="590" cy="400" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M584 400.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="590" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">re-proven</text>
+<circle cx="710" cy="400" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M704 400.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="710" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">reviewed</text>
+<rect x="846" y="372" width="200" height="56" rx="28" fill="#a78bfa" fill-opacity="0.12" stroke="#a78bfa" stroke-width="2"/>
+<circle cx="876" cy="400" r="13" fill="#a78bfa"/>
+<path d="M870 400.5 l4 4 l8 -8.5" fill="none" stroke="#0d1117" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="898" y="406.5" class="sans" font-size="19" font-weight="600" fill="#f0f6fc">you approve</text>
+<text x="946" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">checkpoint</text>
+<line x1="1050" y1="400" x2="1146" y2="400" stroke="#a78bfa" stroke-width="2.5" stroke-dasharray="7 7" stroke-linecap="round"/>
+<g fill="none" stroke="#a78bfa" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="1168" cy="383" r="6"/>
+    <line x1="1168" y1="389" x2="1168" y2="411"/>
+    <circle cx="1168" cy="417" r="6"/>
+    <circle cx="1196" cy="417" r="6"/>
+    <path d="M1196 411 V393 a10 10 0 0 0 -10 -10 H1179"/>
+    <path d="M1184 378 l-5 5 l5 5"/>
+  </g>
+<text x="1182" y="450" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">pull request</text>
+
+  <rect x="160" y="512" width="960" height="60" rx="14" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="640" y="550" text-anchor="middle" class="mono" font-size="22" fill="#f0f6fc"><tspan fill="#2dd4bf">/plugin install</tspan> resolve-issue --marketplace TLXyloph/resolve-issue</text>
+</svg>

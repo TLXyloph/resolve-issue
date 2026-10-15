@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, node ${{ matrix.node }})
+    # The publish guard is POSIX sh + awk. On ubuntu, sh is dash and awk is the distribution's awk;
+    # on macOS, sh is bash in POSIX mode and awk is BSD awk. Running on both covers both families.
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Show the shell and awk in use
+        # readlink -f follows ubuntu's alternatives links to dash and mawk or gawk. Never `awk -W version`: BSD awk would wait on stdin.
+        run: |
+          readlink -f /bin/sh
+          readlink -f "$(command -v awk)"
+      - name: Test
+        run: npm test
+      - name: Lint
+        run: npm run lint
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # shellcheck is preinstalled on GitHub's ubuntu runners.
+      - name: shellcheck the hook scripts
+        run: |
+          shellcheck --version
+          shellcheck -s sh hooks/publish-guard.sh hooks/run-marker.sh
+
+  validate:
+    name: plugin validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Pinned so a Claude Code release cannot change the result of an unchanged commit.
+      CLAUDE_CODE_VERSION: 2.1.296
+      DISABLE_AUTOUPDATER: 1
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      # The validator reads local files only; it needs no API key.
+      - name: Validate the marketplace
+        run: npx -y "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" plugin validate --strict .
+      - name: Validate the plugin manifest
+        run: npx -y "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" plugin validate --strict .claude-plugin/plugin.json
+      - name: Validate the skills
+        run: npx -y "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" plugin validate --strict skills

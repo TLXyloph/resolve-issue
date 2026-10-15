@@ -1,0 +1,60 @@
+{
+  "name": "resolve-issue",
+  "displayName": "resolve-issue",
+  "version": "1.0.0",
+  "description": "Turn a GitHub issue into a validated, ready-to-open pull request. A multi-agent workflow checks the issue is worth taking (closed, claimed, competing PRs, the repo's AI policy), reproduces the bug, fixes it, has an independent checker re-prove the fix, reviews it and drafts the PR. Four modes from a 2-agent triage to a thorough run, with effort levels and a hard agent cap. Nothing is pushed, posted or opened until you approve.",
+  "author": {
+    "name": "TLXyloph",
+    "url": "https://github.com/TLXyloph"
+  },
+  "homepage": "https://github.com/TLXyloph/resolve-issue",
+  "repository": "https://github.com/TLXyloph/resolve-issue",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "issues",
+    "pull-requests",
+    "open-source",
+    "contributing",
+    "bug-fix",
+    "workflow",
+    "multi-agent",
+    "code-review",
+    "testing"
+  ],
+  "userConfig": {
+    "default_mode": {
+      "type": "string",
+      "title": "Default mode",
+      "description": "How much work a run does when you don't name a mode: triage (is the issue worth taking?), quick, standard or thorough.",
+      "options": ["triage", "quick", "standard", "thorough"],
+      "default": "standard"
+    },
+    "default_effort": {
+      "type": "string",
+      "title": "Default effort",
+      "description": "How hard each agent thinks: low, medium, high or max, or inherit to use your session's effort level.",
+      "options": ["low", "medium", "high", "max", "inherit"],
+      "default": "medium"
+    },
+    "confirm_before_run": {
+      "type": "boolean",
+      "title": "Ask before running",
+      "description": "Show the run's size and ask once before it starts. Triage runs never ask.",
+      "default": true
+    },
+    "publish_guard": {
+      "type": "boolean",
+      "title": "Publish guard",
+      "description": "Block git push and GitHub writes by subagents for 12 hours after a resolve-issue run starts in the session, and in resolve-issue worktrees until you approve a publish. A subagent's publishing command from a directory the guard cannot resolve, or a subagent's command past the guard's reading bounds, is blocked in any session. It reads command text: defense in depth, not a sandbox (see docs/safety.md).",
+      "default": true
+    },
+    "autonomy": {
+      "type": "string",
+      "title": "Autonomy",
+      "description": "How much the skill decides about review findings on its own, only at validation gates, which cannot publish. ask: you decide every finding. minor: it settles low-impact, declined and informational findings, and asks before any fix. full: it also makes the fixes it recommends, up to the round limit. Publishing always waits for your approval.",
+      "options": ["ask", "minor", "full"],
+      "default": "minor"
+    }
+  }
+}

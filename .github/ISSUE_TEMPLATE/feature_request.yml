@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest a change or a new capability for resolve-issue.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should resolve-issue do instead? Name the mode, step or file if you know it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways to solve the problem, including workarounds you use now.
+  - type: textarea
+    id: safety
+    attributes:
+      label: Effect on cost and safety
+      description: Does this add agent calls, or change what the pipeline may do without your approval?
