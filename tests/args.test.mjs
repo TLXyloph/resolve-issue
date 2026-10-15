@@ -63,7 +63,7 @@ describe('input boundary', () => {
     }
   })
   test('non-numeric attempts and maxAgents stop with bad-args', async () => {
-    for (const extra of [{ attempts: 'abc' }, { attempts: 1.5 }, { attempts: '-1' }, { attempts: '2x' }, { retries: 'many' },
+    for (const extra of [{ attempts: 'abc' }, { attempts: 1.5 }, { attempts: '-1' }, { attempts: '2x' },
       { maxAgents: 'abc' }, { maxAgents: 10.5 }, { maxAgents: '-5' }, { maxAgents: true }]) {
       await noAgents(runArgs(extra), { stopped: 'bad-args' })
     }
@@ -81,8 +81,10 @@ describe('input boundary', () => {
     assert.ok(find((await run({ workspace: '/tmp/ws///', mode: 'quick' })).calls, 'U1:repo').prompt.includes("The user's workspace is '/tmp/ws'."))
     assert.equal((await run({ workspace: 'C:\\work\\src', mode: 'triage' })).result.status, 'triaged')
   })
-  test('a scopeDecision other than proceed or abort stops with bad-args', async () => {
-    for (const scopeDecision of ['maybe', { key: 'R2:abc', answer: 'yes' }, { key: 'R2:abc' }]) await noAgents(runArgs({ scopeDecision }), { stopped: 'bad-args' })
+  test('scopeDecisions that is not a list of keyed proceed or abort answers stops with bad-args', async () => {
+    for (const scopeDecisions of ['proceed', { key: 'R2:abc', answer: 'proceed' }, ['proceed'], [{ answer: 'proceed' }], [{ key: 'R2:abc', answer: 'yes' }], [{ key: 'R2:abc' }]]) {
+      await noAgents(runArgs({ scopeDecisions }), { stopped: 'bad-args' })
+    }
   })
   test('mode, effort and gate ignore case and spaces; session/default/inherit mean the session model', async () => {
     const { result, calls } = await run({ mode: ' Triage ', effort: 'LOW', gate: 'Builtin', model: 'default' })
@@ -151,9 +153,9 @@ describe('mode', () => {
     assert.equal(count((await run({ mode: 'quick', polish: true })).calls, 'P1:polish-review'), 1)
     assert.equal(count((await run({ mode: 'thorough', polish: 'false' })).calls, 'P1:polish-review'), 0)
   })
-  test('attempts sets the number of tries; retries is an alias', async () => {
+  test('attempts sets the number of tries', async () => {
     assert.equal(count((await run({ attempts: 5 }, patch('R6:verify', { passing: false }))).calls, 'R6:impl'), 5)
-    const q = await run({ mode: 'quick', retries: '1' }, patch('R6:check', { passing: false }))
+    const q = await run({ mode: 'quick', attempts: '1' }, patch('R6:check', { passing: false }))
     assert.equal(q.result.stopped, 'verify-failed')
     assert.equal(count(q.calls, 'R6:impl'), 1)
   })
@@ -318,10 +320,10 @@ describe('gate: the final check', () => {
     const finished = new Set(first.log.filter(e => e.result != null).map(e => e.label))
     assert.deepEqual([result.status, resumed.live[0], resumed.live.filter(l => finished.has(l))], ['awaiting-approval', 'U1:repo~retry', []])
   })
-  test('gateAttempt and confirmAttempt re-label and re-number the re-run step', async () => {
+  test('gateAttempt and confirmAttempts re-label and re-number the re-run step', async () => {
     assert.ok(find((await run({ gateAttempt: 1 })).calls, 'FINAL:check#1').prompt.startsWith('FINAL CHECK (attempt 2)'))
     assert.ok(find((await run({ gateAttempt: 2 }, GATED)).calls, 'R7:no-mistakes#2').prompt.startsWith('R7 (validation attempt 3)'))
-    assert.match(find((await run({ confirmAttempt: 1 })).calls, 'R6.5:confirm#0').prompt, /^R6\.5 \(confirm, check 2\)/)
+    assert.match(find((await run({ confirmAttempts: { 0: 1 } })).calls, 'R6.5:confirm#0').prompt, /^R6\.5 \(confirm, check 2\)/)
   })
   const r7 = g => run({}, { ...GATED, ...patch('R7:no-mistakes', g) })
   test('the no-mistakes run skips push, pr and ci and the packet points at the intent file', async () => {
@@ -446,11 +448,11 @@ describe('resume overrides: retryNodes and confirmAttempts', () => {
       assert.match((await noAgents(runArgs(extra), { stopped: 'bad-args' })).reason, /^(retryNodes|confirmAttempts) must /, JSON.stringify(extra))
     }
   })
-  test('the maps take JSON text too, and the old pairs merge into them', async () => {
-    const r = await run({ retryNodes: '{"R3:scope":2}', retryNode: 'R2:plan' })
-    assert.ok(find(r.calls, 'R3:scope').prompt.endsWith(`${SUFFIX} 2.)`) && find(r.calls, 'R2:plan').prompt.endsWith(`${SUFFIX} 1.)`))
-    assert.ok(!find(r.calls, 'R1:validate').prompt.includes(SUFFIX))
-    const c = await run({ attempts: 2, confirmAttempts: { 1: 2 }, confirmIter: 0, confirmAttempt: 1 }, patch('R6.5:confirm', n => (n === 0 ? { redOnBase: false } : undefined)))
+  test('the maps take JSON text too', async () => {
+    const r = await run({ retryNodes: '{"R3:scope":2}' })
+    assert.ok(find(r.calls, 'R3:scope').prompt.endsWith(`${SUFFIX} 2.)`))
+    assert.ok(!find(r.calls, 'R2:plan').prompt.includes(SUFFIX) && !find(r.calls, 'R1:validate').prompt.includes(SUFFIX))
+    const c = await run({ attempts: 2, confirmAttempts: '{"0":1,"1":2}' }, patch('R6.5:confirm', n => (n === 0 ? { redOnBase: false } : undefined)))
     assert.deepEqual(['R6.5:confirm#0', 'R6.5:confirm#1'].map(l => find(c.calls, l).prompt.split(':')[0]), ['R6.5 (confirm, check 2)', 'R6.5 (confirm, check 3)'])
   })
   test("chained agent-failed resumes on two different nodes keep the first node's retry prompt", async () => {

@@ -5,7 +5,7 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import {
-  loadPipeline, assertPureLiteral, canned, baseLabel, run, labels, count, find, patch, withTriage, withRepo, GATED, HAPPY_AGENT_COUNTS,
+  loadPipeline, assertPureLiteral, canned, baseLabel, run as runScenario, labels, count, find, patch, withTriage, withRepo, GATED, HAPPY_AGENT_COUNTS,
   CLONE, WORKTREE, STATE_DIR, BRANCH, BASE_SHA, POLISH_SHA, implSha, LOGIN,
 } from './harness.mjs'
 
@@ -14,6 +14,13 @@ const CLAIM = (extra = {}) => ({ who: 'someone', daysAgo: 3, url: 'https://githu
 const WIP = (extra = {}) => ({ who: 'someone', url: 'https://github.com/someone/widget/tree/fix-42', kind: 'branch', daysAgo: 10, isMaintainer: false, ...extra })
 const FAIL = { passing: false, tests: false, reproductionFixed: false, failures: ['tests/test_ranges.py::test_bounds: assert [1, 2] == [1, 2, 3]'] }
 const once = p => n => (n === 0 ? p : undefined) // patch only the first call of a node
+// Every stop code and status the scenarios in this file return, checked against results.md by the last test.
+const returned = { stopped: new Set(), status: new Set() }
+const run = async (...a) => {
+  const r = await runScenario(...a)
+  for (const k of ['stopped', 'status']) if (r.result && r.result[k]) returned[k].add(r.result[k])
+  return r
+}
 
 describe('script shape', () => {
   test('meta is a plain literal the runtime can read without running the script', () => {
@@ -185,6 +192,8 @@ describe('worktree and validation', () => {
     const p = find((await run()).calls, 'W1:worktree').prompt
     assert.ok(p.includes(`worktree add --no-track -b ${BRANCH} '${WORKTREE}' ${BASE_SHA}`))
     assert.match(p, /Never detach, reset, force, stash, rename or delete anything/)
+    const prLists = p.match(/gh pr list [^)]*/g)
+    assert.ok(prLists.length === 2 && prLists.every(c => c.includes(`--head ${BRANCH} --author @me`)), 'only your own PR from the branch counts')
   })
   test('a branch outside resolve-issue stops with prior-branch-exists', async () => {
     const { result, calls } = await run({}, { 'W1:worktree': { worktreePath: '', branch: '', priorBranch: BRANCH, priorBranchLog: 'a1b2c3d wip', priorPrUrl: 'https://github.com/acme/widget/pull/7' } })
@@ -244,20 +253,19 @@ describe('scope gate', () => {
   })
   test('proceed with the matching key continues to approval and records the approved scope', async () => {
     const gateKey = await key()
-    const { result } = await run({ scopeDecision: { key: gateKey, answer: 'proceed' } }, r5())
+    const { result } = await run({ scopeDecisions: [{ key: gateKey, answer: 'Proceed' }] }, r5())
     assert.equal(result.status, 'awaiting-approval')
     assert.deepEqual(result.approvedScopes, [{ node: 'R5#0', key: gateKey, question: DIVERGE.decision.question, filesTouched: canned('R3:scope').filesTouched }])
-    assert.equal((await run({ scopeDecision: 'Proceed' }, r5())).result.status, 'awaiting-approval', 'a bare answer applies to the first gate')
   })
   test('abort stops with user-declined-wider-scope', async () => {
-    const { result } = await run({ scopeDecision: { key: await key(), answer: 'abort' } }, r5())
+    const { result } = await run({ scopeDecisions: [{ key: await key(), answer: 'abort' }] }, r5())
     assert.deepEqual([result.stopped, result.node], ['user-declined-wider-scope', 'R5#0'])
   })
   test('a decision for another key or another proposal does not apply', async () => {
     const gateKey = await key()
-    const other = (await run({ scopeDecision: { key: 'R5#0:deadbeef', answer: 'proceed' } }, r5())).result
+    const other = (await run({ scopeDecisions: [{ key: 'R5#0:deadbeef', answer: 'proceed' }] }, r5())).result
     assert.deepEqual([other.status, other.gateKey], ['awaiting-scope-decision', gateKey])
-    const changed = (await run({ scopeDecision: { key: gateKey, answer: 'proceed' } }, r5({ finalScope: { filesTouched: ['src/widget/api.py'], outOfScope: [] } }))).result
+    const changed = (await run({ scopeDecisions: [{ key: gateKey, answer: 'proceed' }] }, r5({ finalScope: { filesTouched: ['src/widget/api.py'], outOfScope: [] } }))).result
     assert.equal(changed.status, 'awaiting-scope-decision')
     assert.notEqual(changed.gateKey, gateKey)
   })
@@ -266,24 +274,24 @@ describe('scope gate', () => {
     const { result, calls } = await run({ mode: 'quick' }, o)
     assert.deepEqual([result.status, result.node, calls.at(-1).label], ['awaiting-scope-decision', 'R2', 'R2:plan+scope'])
     assert.match(result.gateKey, /^R2:/)
-    const next = (await run({ mode: 'quick', scopeDecision: { key: result.gateKey, answer: 'proceed' } }, o)).result
+    const next = (await run({ mode: 'quick', scopeDecisions: [{ key: result.gateKey, answer: 'proceed' }] }, o)).result
     assert.deepEqual([next.status, next.approvedScopes[0].node], ['awaiting-approval', 'R2'])
   })
   test('a divergent re-scope after a failed implementation halts too', async () => {
     const o = { ...patch('R6:verify', once({ ...FAIL, needsRescope: true })), ...patch('R5:rescope-impl', DIVERGE) }
     const { result } = await run({}, o)
     assert.deepEqual([result.status, result.node], ['awaiting-scope-decision', 'R6→R5#0'])
-    assert.equal((await run({ scopeDecision: { key: result.gateKey, answer: 'proceed' } }, o)).result.status, 'awaiting-approval')
+    assert.equal((await run({ scopeDecisions: [{ key: result.gateKey, answer: 'proceed' }] }, o)).result.status, 'awaiting-approval')
   })
   test('two divergent gates in one run can both be approved by resuming with every answer', async () => {
     const o = patch('R5:rescope', n => (n === 0 ? { ...DIVERGE, scopeWidened: true } : n === 1 ? { ...DIVERGE, decision: { ...DIVERGE.decision, question: 'Also widen the parser?' } } : undefined))
     const first = (await run({}, o)).result
-    const second = (await run({ scopeDecision: { key: first.gateKey, answer: 'proceed' } }, o)).result
+    const second = (await run({ scopeDecisions: [{ key: first.gateKey, answer: 'proceed' }] }, o)).result
     assert.equal(second.node, 'R5#1')
     assert.deepEqual(second.earlierDecisions, [{ key: first.gateKey, answer: 'proceed' }])
     assert.ok(second.resume.includes(first.gateKey) && second.resume.includes(second.gateKey))
     // Only the newest answer re-halts at the first gate; every answer so far gets through both.
-    assert.equal((await run({ scopeDecision: { key: second.gateKey, answer: 'proceed' } }, o)).result.node, 'R5#0')
+    assert.equal((await run({ scopeDecisions: [{ key: second.gateKey, answer: 'proceed' }] }, o)).result.node, 'R5#0')
     const done = (await run({ scopeDecisions: [{ key: first.gateKey, answer: 'proceed' }, { key: second.gateKey, answer: 'proceed' }] }, o)).result
     assert.equal(done.status, 'awaiting-approval')
     assert.deepEqual(done.approvedScopes.map(a => a.node), ['R5#0', 'R5#1'])
@@ -424,7 +432,7 @@ describe('confirmation by change kind, judged in code', () => {
       assert.equal(result.stopped, 'tree-damaged')
       assert.ok(result.resume.endsWith('args.confirmAttempts={"0":1}.'), result.resume)
       assert.equal(calls.at(-1).label, `${node}#0`)
-      assert.deepEqual((await run({ mode, confirmAttempt: 1 }, patch(node, { treeIntact: false }))).result.confirmAttempts, { 0: 2 })
+      assert.deepEqual((await run({ mode, confirmAttempts: { 0: 1 } }, patch(node, { treeIntact: false }))).result.confirmAttempts, { 0: 2 })
     })
   }
 })
@@ -487,5 +495,15 @@ describe('approval packet', () => {
   test('the commit rule asks for a sign-off only when DCO is required', async () => {
     assert.match(find((await run({}, patch('GATE-0', { dcoRequired: true }))).calls, 'R6:impl#0').prompt, /sign off with git commit -s/)
     assert.doesNotMatch(find((await run()).calls, 'R6:impl#0').prompt, /git commit -s/)
+  })
+})
+
+// Runs last: the scenarios above have filled `returned` by now.
+describe('documentation', () => {
+  test('every stop code and status the scenarios above returned is documented in results.md', () => {
+    const doc = readFileSync(new URL('../skills/resolve-issue/results.md', import.meta.url), 'utf8')
+    assert.ok(returned.stopped.size >= 15 && returned.status.size >= 3, 'run the whole file: the scenarios above collect the values')
+    for (const code of returned.stopped) assert.ok(doc.includes(`\`${code}\``), `results.md does not document ${code}`)
+    for (const status of returned.status) assert.ok(doc.includes(`\`status: "${status}"\``), `results.md does not document ${status}`)
   })
 })

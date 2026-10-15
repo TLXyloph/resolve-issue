@@ -73,9 +73,8 @@ if (model && !/^[A-Za-z0-9][A-Za-z0-9._:@\/[\]-]{0,200}$/.test(model)) return ba
 const gate = String(input.gate || 'auto').trim().toLowerCase()
 if (!GATES.includes(gate)) return bad(`Unknown gate ${JSON.stringify(input.gate)}. Gates: ${GATES.join(', ')}.`)
 const cfg = MODES[mode]
-const attemptsIn = input.attempts ?? input.retries
-const attempts = attemptsIn == null || attemptsIn === '' ? cfg.attempts : intIn(attemptsIn, 1, 8)
-if (attempts == null) return bad(`attempts must be a whole number from 1 to 8; got ${JSON.stringify(attemptsIn)}.`)
+const attempts = input.attempts == null || input.attempts === '' ? cfg.attempts : intIn(input.attempts, 1, 8)
+if (attempts == null) return bad(`attempts must be a whole number from 1 to 8; got ${JSON.stringify(input.attempts)}.`)
 const maxAgents = input.maxAgents == null || input.maxAgents === '' ? cfg.maxAgents : intIn(input.maxAgents, 4, 200)
 if (maxAgents == null) return bad(`maxAgents must be a whole number from 4 to 200; got ${JSON.stringify(input.maxAgents)}.`)
 const polish = input.polish == null ? cfg.polish : truthy(input.polish)
@@ -103,21 +102,14 @@ function countMap(name, raw, keyRe, what, example, norm = k => k) {
 const retryNodes = countMap('retryNodes', input.retryNodes, /^\S{1,100}$/, 'step label', '{"R4:feasibility#0":1}')
 const confirmAttempts = countMap('confirmAttempts', input.confirmAttempts, /^\d{1,3}$/, 'attempt index', '{"0":1}', k => String(Number(k)))
 for (const m of [retryNodes, confirmAttempts]) if (typeof m === 'string') return bad(m)
-const bump = (m, k, n) => m.set(k, Math.max(m.get(k) || 0, n))
-// The older single-step pairs still work and merge into the maps; confirmAttempt alone re-checks every attempt.
-const retryNode = typeof input.retryNode === 'string' ? input.retryNode.trim() : ''
-if (retryNode) bump(retryNodes, retryNode, counter(input.retryRound) || 1)
-const confirmIter = input.confirmIter == null || input.confirmIter === '' ? -1 : Number.isInteger(Number(input.confirmIter)) && Number(input.confirmIter) >= 0 ? Number(input.confirmIter) : -1
-const confirmAll = confirmIter < 0 ? counter(input.confirmAttempt) : 0
-if (confirmIter >= 0 && counter(input.confirmAttempt)) bump(confirmAttempts, String(confirmIter), counter(input.confirmAttempt))
-const recheck = it => confirmAttempts.get(String(it)) || confirmAll
+const recheck = it => confirmAttempts.get(String(it)) || 0
 const asJson = m => JSON.stringify(Object.fromEntries(m))
 const POLISH_ITER = 99
-// Scope decisions answer halted gates: { key, answer } from a halt payload, or a list of them (resume with every earlier answer
-// plus the new one). Each gate takes the answer with its own key; a decision without a key answers the first gate it meets.
-const rawDecisions = input.scopeDecisions ?? input.scopeDecision
-const decisions = (Array.isArray(rawDecisions) ? rawDecisions : rawDecisions ? [rawDecisions] : []).map(d => d && typeof d === 'object' ? { key: d.key ? String(d.key) : '', answer: String(d.answer || '').trim().toLowerCase() } : { key: '', answer: String(d).trim().toLowerCase() })
-if (decisions.some(d => !/^(proceed|abort)$/.test(d.answer))) return bad('Each scope decision must be "proceed" or "abort", as { key, answer } with the key from the halt payload.')
+// Scope decisions answer halted gates: a list of { key, answer }, each key from a halt payload (resume with every earlier answer
+// plus the new one). Each gate takes only the answer with its own key.
+const rawDecisions = input.scopeDecisions == null || input.scopeDecisions === '' ? [] : input.scopeDecisions
+const decisions = Array.isArray(rawDecisions) ? rawDecisions.map(d => ({ key: d && d.key ? String(d.key) : '', answer: String((d && d.answer) || '').trim().toLowerCase() })) : null
+if (!decisions || decisions.some(d => !d.key || !/^(proceed|abort)$/.test(d.answer))) return bad('scopeDecisions must be a list of { key, answer }, with the key from the halt payload and the answer "proceed" or "abort".')
 const PROFILE = EFFORTS[effort]
 const VERDICT = 'Not resumable: this stop is a verdict and a resume replays it. Start a fresh run (without resumeFromRunId) if something changed.'
 // Plain-prose rules for text people read (PR title/body, commit bodies, suggested replies). Code, docstrings, changelog lines and commit subjects follow the repo.
@@ -179,8 +171,7 @@ function scopeGate(rescope, node) {
   if (!rescope.divergesFromLiteralAsk) return null
   const d = rescope.decision || {}, fs = (rescope.finalScope || {}).filesTouched || []
   const key = `${node}:${fnv(JSON.stringify([d.question || '', fs]))}`
-  let i = decisions.findIndex((x, j) => !usedDecisions.has(j) && x.key === key)
-  if (i < 0) i = decisions.findIndex((x, j) => !usedDecisions.has(j) && !x.key)
+  const i = decisions.findIndex((x, j) => !usedDecisions.has(j) && x.key === key)
   if (i >= 0) {
     usedDecisions.add(i)
     if (decisions[i].answer === 'abort') return stopPayload({ stopped: 'user-declined-wider-scope', node, scope: rescope.finalScope, resume: VERDICT })
@@ -420,8 +411,8 @@ Return the binding rules as short imperative bullets in summary, plus the struct
 const constraintsP = ask('read', GATE0_PROMPT, { label: 'GATE-0', phase: 'Worktree', schema: CONSTRAINTS, retry: 'join' }) // read beside W1 and R1
 const worktree = await ask('mech', `W1: Create this issue's isolated worktree, or resume the one resolve-issue made earlier. Run git with -C '${clonePath}'. Never detach, reset, force, stash, rename or delete anything.
 - If no branch fix/issue-${issueNumber} exists locally (git branch --list) or on the user's fork (${forkUrl ? `GIT_TERMINAL_PROMPT=0 git ls-remote ${forkUrl} refs/heads/fix/issue-${issueNumber}; a missing fork just means no branch there` : 'no fork known: check locally only'}), run: git -C '${clonePath}' worktree add --no-track -b fix/issue-${issueNumber} '${WT_BASE}' ${baseSha} (created=true).
-- Else, if '${WT_BASE}' is a worktree on fix/issue-${issueNumber} that contains '${WT_BASE}/.resolve-issue' (made by an earlier resolve-issue run) and no PR from that branch is open (gh pr list --repo ${owner}/${repo} --head fix/issue-${issueNumber} --state open), keep it exactly as it is (resumed=true).
-- Otherwise change nothing: return worktreePath "" and priorBranch fix/issue-${issueNumber}, priorBranchLog (git log --oneline -10 of it) and priorPrUrl (any PR from it).
+- Else, if '${WT_BASE}' is a worktree on fix/issue-${issueNumber} that contains '${WT_BASE}/.resolve-issue' (made by an earlier resolve-issue run) and no PR of yours from that branch is open (gh pr list --repo ${owner}/${repo} --head fix/issue-${issueNumber} --author @me --state open), keep it exactly as it is (resumed=true).
+- Otherwise change nothing: return worktreePath "" and priorBranch fix/issue-${issueNumber}, priorBranchLog (git log --oneline -10 of it) and priorPrUrl (your own PR from it, if any: gh pr list --repo ${owner}/${repo} --head fix/issue-${issueNumber} --author @me --state all).
 - For a created or resumed worktree, make sure the scratch folder exists: mkdir -p '${WT_BASE}/.resolve-issue' && printf '*\\n' > '${WT_BASE}/.resolve-issue/.gitignore' && rm -f '${WT_BASE}/.resolve-issue/publish-approved' (the folder ignores itself, so git status stays empty; any old approval token is removed).
 Return worktreePath, branch (short name), headSha (git rev-parse HEAD in the worktree), created, resumed, and the prior* fields when they apply. Never push, fetch into the branch or write to GitHub. ${DATA}`, { label: 'W1:worktree', phase: 'Worktree', schema: WORKTREE })
 if (!worktree) return failed('W1:worktree')
@@ -526,14 +517,9 @@ FINDINGS:\n${clip(feas, 6000)}
 // ── PHASE 4: implement + commit, check, informed retry; a wrong approach cycles back to a re-scope.
 phase('Implement & Verify')
 let verify = { passing: false }, confirm = null, confirmed = false, lastImpl = null, lastFailure = null, lastConfirmFailure = null, lastNote = null, rescopesUsed = 0, iter = 0, scopeChange = null
-// A tree-damaged resume names every attempt's re-check count so far (the ones confirmAttempt alone set too), with this one bumped.
-const confirmResume = it => {
-  const m = new Map(confirmAttempts)
-  if (confirmAll) for (let j = 0; j <= iter; j++) if (!m.has(String(j))) m.set(String(j), confirmAll)
-  return m.set(String(it), recheck(it) + 1)
-}
+// A tree-damaged resume names every attempt's re-check count so far, with this one bumped.
 const damaged = (it, head, reason, c) => {
-  const next = confirmResume(it)
+  const next = new Map(confirmAttempts).set(String(it), recheck(it) + 1)
   return stopPayload({ stopped: 'tree-damaged', reason, confirm: c, confirmAttempts: Object.fromEntries(next),
     resume: `Show the user git -C '${WT}' status and git -C '${WT}' log --oneline ${baseSha}..HEAD. After THEY restore the tree to ${head}, re-invoke with this run's resumeFromRunId and args.confirmAttempts=${asJson(next)}.` })
 }

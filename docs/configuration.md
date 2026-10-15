@@ -98,7 +98,7 @@ A resume works only in the Claude Code session that started the run: the same co
 |---|---|---|
 | `resumeFromRunId` | any resumable stop | A Workflow tool parameter, not a pipeline argument: replays finished agent calls from that run's cache. |
 | `force: true` | `issue-closed`, `competing-pr`, `claimed`, `work-in-progress`, `not-viable-label` | Recon replays from cache and the run goes past the soft stop. |
-| `scopeDecisions: [ ...earlierDecisions, { "key": "<gateKey>", "answer": "proceed" \| "abort" } ]` | `status: "awaiting-scope-decision"` | Answers every scope gate the run has met: the halt's `earlierDecisions`, plus this gate's key and answer. Each gate takes only the answer with its own key. `proceed` continues with the proposed scope; `abort` ends with `user-declined-wider-scope`. A single `scopeDecision` object is still accepted, and an answer without a key answers the first gate it meets. |
+| `scopeDecisions: [ ...earlierDecisions, { "key": "<gateKey>", "answer": "proceed" \| "abort" } ]` | `status: "awaiting-scope-decision"` | Answers every scope gate the run has met: the halt's `earlierDecisions`, plus this gate's key and answer. Each gate takes only the answer with its own key. `proceed` continues with the proposed scope; `abort` ends with `user-declined-wider-scope`. |
 | `attempts` (larger) | `verify-failed`, `unconfirmed` | More implementation attempts, up to 8. Commits from earlier attempts stay on the branch. At 8, `resume` says a resume cannot go further: stop, or start a fresh run with a different approach. |
 | `maxAgents` (larger) | `agent-budget-reached` | A higher cap, up to 200. Replayed steps count toward it. At 200, `resume` says a resume cannot go further. |
 | no new argument | `token-budget-reached` | Resume in a new turn. Claude Code's token budget for the turn ran out; a larger `maxAgents` does not help. |
@@ -127,7 +127,6 @@ The skill passes these to `resolve-issue:pipeline`. You only need them if you ca
 | `issueUrl` | Must match `https://github.com/<owner>/<repo>/issues/<n>` after clean-up. |
 | `workspace` | Absolute path of the current directory, with no quote or newline characters. |
 | `mode`, `effort`, `model`, `gate` | As above. Unknown values stop with `bad-args`. |
-| `attempts` (alias `retries`), `maxAgents` | Whole numbers in range (1 to 8, 4 to 200). A value outside the range or not a whole number stops with `bad-args`; it is not clamped. |
+| `attempts`, `maxAgents` | Whole numbers in range (1 to 8, 4 to 200). A value outside the range or not a whole number stops with `bad-args`; it is not clamped. |
 | `polish`, `force` | `true` or `"true"`. |
-| `scopeDecisions` (or `scopeDecision`), `gateAttempt`, `validateAttempt`, `retryNodes`, `confirmAttempts` | Resume only. See [resuming a run](#resuming-a-run). `retryNodes` and `confirmAttempts` take an object or its JSON text; a label is 1 to 100 characters with no spaces, an attempt index is 1 to 3 digits, and each count is a whole number from 1 to 9999. A malformed map stops with `bad-args`. |
-| `retryNode` with `retryRound`, `confirmIter` with `confirmAttempt` | Older one-step forms, still accepted. They merge into the maps above, and the higher count wins. `confirmAttempt` without `confirmIter` re-checks every attempt. |
+| `scopeDecisions`, `gateAttempt`, `validateAttempt`, `retryNodes`, `confirmAttempts` | Resume only. See [resuming a run](#resuming-a-run). `retryNodes` and `confirmAttempts` take an object or its JSON text; a label is 1 to 100 characters with no spaces, an attempt index is 1 to 3 digits, and each count is a whole number from 1 to 9999. A malformed map stops with `bad-args`, and so does a `scopeDecisions` entry without a key or with an answer other than `proceed` or `abort`. |

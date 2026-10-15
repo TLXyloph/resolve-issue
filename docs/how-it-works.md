@@ -248,7 +248,7 @@ Agents gather facts and return structured data against a schema. The script make
 
 A run halts with `status: "awaiting-scope-decision"` only when the responsible fix changes a public API or contract, widens the security surface, contradicts a maintainer-stated requirement, or no code change is responsible. Every other judgement call is recorded in the plan's `decisionsTaken` and does not halt. You answer `proceed` or `abort`; `abort` ends with `user-declined-wider-scope`.
 
-The halt returns `gateKey` and `earlierDecisions` (the gates this run already passed). The skill resumes with `scopeDecisions`: every entry in `earlierDecisions`, plus `{ key: <gateKey>, answer: "proceed" | "abort" }` for this gate. A run that halts twice therefore needs both answers. A single `scopeDecision` object is still accepted, and an answer without a key answers the first gate it meets.
+The halt returns `gateKey` and `earlierDecisions` (the gates this run already passed). The skill resumes with `scopeDecisions`: every entry in `earlierDecisions`, plus `{ key: <gateKey>, answer: "proceed" | "abort" }` for this gate. A run that halts twice therefore needs both answers.
 
 ### Fresh base, isolated worktree
 
