@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">resolve-issue</title>
+  <desc id="desc">GitHub issue in. Validated pull request out. Published only when you say so. An issue passes five checkpoints (viable, reproduced, fixed, re-proven, reviewed), then waits for your approval before it becomes a pull request.</desc>
+  <defs>
+    <linearGradient id="rail" gradientUnits="userSpaceOnUse" x1="124" y1="0" x2="1046" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="accent" gradientUnits="userSpaceOnUse" x1="560" y1="0" x2="990" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2dd4bf" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="card"><rect x="1" y="1" width="1278" height="398" rx="20"/></clipPath>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; }
+  </style>
+  <g clip-path="url(#card)">
+    <rect width="1280" height="400" fill="#0d1117"/>
+    <ellipse cx="1180" cy="40" rx="420" ry="260" fill="url(#glowB)"/>
+    <ellipse cx="60" cy="380" rx="420" ry="220" fill="url(#glowA)"/>
+  </g>
+  <rect x="1" y="1" width="1278" height="398" rx="20" fill="none" stroke="#30363d" stroke-width="2"/>
+  <rect x="1038" y="52" width="195" height="32" rx="16" fill="#161b22" stroke="#30363d"/>
+  <text x="1135.5" y="70" text-anchor="middle" class="mono" font-size="15" fill="#c9d1d9">Claude Code plugin</text>
+
+  <text x="72" y="128" class="sans" font-size="80" font-weight="800" letter-spacing="-1.5" fill="#f0f6fc">resolve-issue</text>
+  <text x="74" y="186" class="sans" font-size="26" fill="#c9d1d9">GitHub issue in. Validated pull request out. <tspan font-weight="700" fill="url(#accent)">Published only when you say so.</tspan></text>
+  <line x1="124" y1="286" x2="846" y2="286" stroke="url(#rail)" stroke-width="3" stroke-linecap="round"/>
+<circle cx="100" cy="286" r="19" fill="#0d1117" stroke="#2dd4bf" stroke-width="3"/>
+<circle cx="100" cy="286" r="5.5" fill="#2dd4bf"/>
+<text x="100" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">issue</text>
+<circle cx="230" cy="286" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M224 286.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="230" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">viable</text>
+<circle cx="350" cy="286" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M344 286.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="350" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">reproduced</text>
+<circle cx="470" cy="286" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M464 286.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="470" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">fixed</text>
+<circle cx="590" cy="286" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M584 286.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="590" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">re-proven</text>
+<circle cx="710" cy="286" r="14" fill="#0d1117" stroke="url(#rail)" stroke-width="2.5"/>
+<path d="M704 286.5 l4 4.5 l8.5 -9" fill="none" stroke="url(#rail)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="710" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">reviewed</text>
+<rect x="846" y="258" width="200" height="56" rx="28" fill="#a78bfa" fill-opacity="0.12" stroke="#a78bfa" stroke-width="2"/>
+<circle cx="876" cy="286" r="13" fill="#a78bfa"/>
+<path d="M870 286.5 l4 4 l8 -8.5" fill="none" stroke="#0d1117" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="898" y="292.5" class="sans" font-size="19" font-weight="600" fill="#f0f6fc">you approve</text>
+<text x="946" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">checkpoint</text>
+<line x1="1050" y1="286" x2="1146" y2="286" stroke="#a78bfa" stroke-width="2.5" stroke-dasharray="7 7" stroke-linecap="round"/>
+<g fill="none" stroke="#a78bfa" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="1168" cy="269" r="6"/>
+    <line x1="1168" y1="275" x2="1168" y2="297"/>
+    <circle cx="1168" cy="303" r="6"/>
+    <circle cx="1196" cy="303" r="6"/>
+    <path d="M1196 297 V279 a10 10 0 0 0 -10 -10 H1179"/>
+    <path d="M1184 264 l-5 5 l5 5"/>
+  </g>
+<text x="1182" y="336" text-anchor="middle" class="mono" font-size="15" fill="#8b949e">pull request</text>
+
+</svg>

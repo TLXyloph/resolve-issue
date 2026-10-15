@@ -1,0 +1,15 @@
+{
+  "name": "resolve-issue",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Claude Code plugin that takes a GitHub issue to a validated, ready-to-open pull request, and never publishes without your approval.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "lint": "node scripts/check.mjs"
+  }
+}

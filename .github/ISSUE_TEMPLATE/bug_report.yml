@@ -1,0 +1,76 @@
+name: Bug report
+description: Something in resolve-issue did not work as documented.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Check [troubleshooting](https://github.com/TLXyloph/resolve-issue/blob/main/docs/troubleshooting.md) first: many stops have a documented fix.
+        Remove tokens, private repository names and private code from everything you paste.
+  - type: input
+    id: version
+    attributes:
+      label: resolve-issue version
+      description: The version in `/plugin` or in `.claude-plugin/plugin.json`.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: claude-code-version
+    attributes:
+      label: Claude Code version
+      description: The output of `claude --version`.
+      placeholder: "2.1.296"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Linux
+        - Windows (untested)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: run
+    attributes:
+      label: Mode, effort and model
+      description: As passed to `/resolve-issue`, or the `run` field of the result.
+      placeholder: "standard, effort=medium, session model"
+    validations:
+      required: true
+  - type: input
+    id: outcome
+    attributes:
+      label: Stop code or status
+      description: The result's `stopped` code or `status`, such as `agent-budget-reached` or `awaiting-approval`.
+      placeholder: "stopped: verify-failed"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result JSON (redacted)
+      description: The JSON the workflow returned, or `<worktree>/.resolve-issue/packet.json`. Redact anything private.
+      render: json
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact command, and the public issue URL if you can share it.
+      placeholder: |
+        1. /resolve-issue https://github.com/<owner>/<repo>/issues/<n> quick
+        2. ...
+    validations:
+      required: true

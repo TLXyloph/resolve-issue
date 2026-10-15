@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" role="img" aria-labelledby="title desc">
+  <title id="title">The resolve-issue pipeline</title>
+  <desc id="desc">Nine stages from left to right: Recon (three agents in parallel: repo map, issue thread, prior art), Worktree (repo rules read alongside), Validate, Plan and Scope (halts to ask you if the fix goes beyond the ask), Implement and Verify (2 to 4 attempts), Confirm, Final check (thorough mode adds two reviewers and a polish pass with its own re-check; the polish flag adds the polish pass in any mode), Your approval, and Publish, a separate step. The run can stop early at any step; the usual stops come after Recon, Validate, Plan and Scope, and Implement and Verify.</desc>
+  <defs>
+    <linearGradient id="flow" gradientUnits="userSpaceOnUse" x1="13" y1="0" x2="760" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; }
+  </style>
+  <rect width="1000" height="470" rx="16" fill="#0d1117"/>
+  <rect x="14" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="60" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">01</text>
+<text x="60" y="184" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Recon</text>
+<text x="60" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">issue thread,</text>
+<text x="60" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">prior art,</text>
+<text x="60" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">AI policy</text>
+<path d="M112 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="124" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="170" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">02</text>
+<text x="170" y="184" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Worktree</text>
+<text x="170" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">fix/issue-N</text>
+<text x="170" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">at a fresh</text>
+<text x="170" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">upstream base</text>
+<path d="M222 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="234" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="280" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">03</text>
+<text x="280" y="184" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Validate</text>
+<text x="280" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">reproduce;</text>
+<text x="280" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">test fails</text>
+<text x="280" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">on the base</text>
+<path d="M332 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="344" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="390" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">04</text>
+<text x="390" y="176" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Plan &amp;</text>
+<text x="390" y="196" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Scope</text>
+<text x="390" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">root cause,</text>
+<text x="390" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">smallest fix,</text>
+<text x="390" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">feasibility</text>
+<path d="M442 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="454" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="500" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">05</text>
+<text x="500" y="176" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Implement</text>
+<text x="500" y="196" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">&amp; Verify</text>
+<text x="500" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">commit,</text>
+<text x="500" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">quick tests,</text>
+<text x="500" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">retry</text>
+<path d="M552 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="564" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="610" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">06</text>
+<text x="610" y="184" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Confirm</text>
+<text x="610" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">fresh agent:</text>
+<text x="610" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">red on base,</text>
+<text x="610" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">green with fix</text>
+<path d="M662 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="674" y="131" width="92" height="82" rx="12" fill="#161b22" stroke="url(#flow)" stroke-width="2"/>
+<text x="720" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">07</text>
+<text x="720" y="176" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Final</text>
+<text x="720" y="196" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">check</text>
+<text x="720" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">tests, lint,</text>
+<text x="720" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">review,</text>
+<text x="720" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">PR draft</text>
+<path d="M772 166 l6 6 l-6 6" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="783" y="130" width="94" height="84" rx="12" fill="#a78bfa"/>
+<text x="830" y="152" text-anchor="middle" class="mono" font-size="11" fill="#0d1117" fill-opacity="0.85">08</text>
+<text x="830" y="176" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#0d1117">Your</text>
+<text x="830" y="196" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#0d1117">approval</text>
+<text x="830" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">diff, evidence,</text>
+<text x="830" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">findings,</text>
+<text x="830" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">PR text</text>
+<path d="M882 166 l6 6 l-6 6" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="894" y="131" width="92" height="82" rx="12" fill="#0d1117" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="940" y="152" text-anchor="middle" class="mono" font-size="11" fill="#8b949e">09</text>
+<text x="940" y="184" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#f0f6fc">Publish</text>
+<text x="940" y="236" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">push, open PR,</text>
+<text x="940" y="252" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">one approved</text>
+<text x="940" y="268" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">step at a time</text>
+<text x="13" y="30" class="sans" font-size="12" font-weight="600" fill="#2dd4bf">3 agents in parallel</text>
+<rect x="21" y="42" width="86" height="20" rx="10" fill="#161b22" stroke="#2dd4bf" stroke-width="1.2"/>
+<text x="64" y="56" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">repo map</text>
+<line x1="15" y1="52" x2="21" y2="52" stroke="#2dd4bf" stroke-width="1.2"/>
+<rect x="21" y="68" width="86" height="20" rx="10" fill="#161b22" stroke="#2dd4bf" stroke-width="1.2"/>
+<text x="64" y="82" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">issue thread</text>
+<line x1="15" y1="78" x2="21" y2="78" stroke="#2dd4bf" stroke-width="1.2"/>
+<rect x="21" y="94" width="86" height="20" rx="10" fill="#161b22" stroke="#2dd4bf" stroke-width="1.2"/>
+<text x="64" y="108" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">prior art</text>
+<line x1="15" y1="104" x2="21" y2="104" stroke="#2dd4bf" stroke-width="1.2"/>
+<path d="M15 52 V122 H60 V128" fill="none" stroke="#2dd4bf" stroke-width="1.2"/>
+<rect x="127" y="94" width="86" height="20" rx="10" fill="#161b22" stroke="#2dd4bf" stroke-width="1.2"/>
+<text x="170" y="108" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">repo rules</text>
+<line x1="170" y1="114" x2="170" y2="128" stroke="#2dd4bf" stroke-width="1.2"/>
+<text x="170" y="86" text-anchor="middle" class="sans" font-size="11" fill="#8b949e">alongside</text>
+<text x="390" y="30" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#a78bfa">asks you first if the fix</text>
+<text x="390" y="45" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#a78bfa">goes beyond the ask</text>
+<rect x="347" y="62" width="86" height="26" rx="13" fill="#a78bfa"/>
+<text x="390" y="80" text-anchor="middle" class="sans" font-size="12.5" font-weight="700" fill="#0d1117">scope halt</text>
+<line x1="390" y1="88" x2="390" y2="128" stroke="#a78bfa" stroke-width="1.6" stroke-dasharray="4 4"/>
+<path d="M525 128 V112 a14 14 0 0 0 -14 -14 H489 a14 14 0 0 0 -14 14 V122" fill="none" stroke="#8b949e" stroke-width="1.6"/>
+<path d="M470 117 l5 6 l5 -6" fill="none" stroke="#8b949e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="500" y="88" text-anchor="middle" class="sans" font-size="12" fill="#8b949e">2 to 4 attempts</text>
+<text x="720" y="45" text-anchor="middle" class="sans" font-size="11" fill="#8b949e">thorough adds</text>
+<rect x="677" y="56" width="86" height="20" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="720" y="70" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">polish</text>
+<rect x="677" y="82" width="86" height="20" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text x="720" y="96" text-anchor="middle" class="mono" font-size="11" fill="#c9d1d9">2 reviewers</text>
+<line x1="720" y1="102" x2="720" y2="128" stroke="#30363d" stroke-width="1.2" stroke-dasharray="3 3"/>
+<g fill="#a78bfa"><circle cx="830" cy="78" r="9"/><path d="M813 116 a17 17 0 0 1 34 0 z"/></g>
+<text x="830" y="45" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#a78bfa">you decide</text>
+<text x="940" y="102" text-anchor="middle" class="sans" font-size="11" fill="#8b949e">separate step,</text>
+<text x="940" y="117" text-anchor="middle" class="sans" font-size="11" fill="#8b949e">guard token</text>
+<line x1="60" y1="276" x2="60" y2="304" stroke="#e3b341" stroke-width="1.6" stroke-dasharray="3 3"/>
+<circle cx="60" cy="314" r="9" fill="none" stroke="#e3b341" stroke-width="2"/>
+<path d="M56.5 310.5 l7 7 M63.5 310.5 l-7 7" stroke="#e3b341" stroke-width="2" stroke-linecap="round"/>
+<text x="60" y="342" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">not takeable;</text>
+<text x="60" y="357" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">triage ends</text>
+<line x1="280" y1="276" x2="280" y2="304" stroke="#e3b341" stroke-width="1.6" stroke-dasharray="3 3"/>
+<circle cx="280" cy="314" r="9" fill="none" stroke="#e3b341" stroke-width="2"/>
+<path d="M276.5 310.5 l7 7 M283.5 310.5 l-7 7" stroke="#e3b341" stroke-width="2" stroke-linecap="round"/>
+<text x="280" y="342" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">invalid or</text>
+<text x="280" y="357" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">already fixed</text>
+<line x1="390" y1="276" x2="390" y2="304" stroke="#e3b341" stroke-width="1.6" stroke-dasharray="3 3"/>
+<circle cx="390" cy="314" r="9" fill="none" stroke="#e3b341" stroke-width="2"/>
+<path d="M386.5 310.5 l7 7 M393.5 310.5 l-7 7" stroke="#e3b341" stroke-width="2" stroke-linecap="round"/>
+<text x="390" y="342" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">infeasible</text>
+<line x1="500" y1="276" x2="500" y2="304" stroke="#e3b341" stroke-width="1.6" stroke-dasharray="3 3"/>
+<circle cx="500" cy="314" r="9" fill="none" stroke="#e3b341" stroke-width="2"/>
+<path d="M496.5 310.5 l7 7 M503.5 310.5 l-7 7" stroke="#e3b341" stroke-width="2" stroke-linecap="round"/>
+<text x="500" y="342" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">out of</text>
+<text x="500" y="357" text-anchor="middle" class="sans" font-size="12" font-weight="600" fill="#e3b341">attempts</text>
+<text x="13" y="392" class="sans" font-size="13" fill="#c9d1d9">Each stop says why and whether it can resume. The agent cap can stop any step; a resume replays finished steps from cache.</text>
+<line x1="13" y1="414" x2="987" y2="414" stroke="#30363d"/>
+<rect x="13" y="428" width="22" height="16" rx="4" fill="#161b22" stroke="url(#flow)" stroke-width="1.6"/>
+<text x="43" y="441" class="sans" font-size="12.5" fill="#8b949e">agent step</text>
+<rect x="133" y="428" width="22" height="16" rx="4" fill="#a78bfa"/>
+<text x="163" y="441" class="sans" font-size="12.5" fill="#8b949e">you decide</text>
+<rect x="254" y="429" width="20" height="14" rx="4" fill="none" stroke="#a78bfa" stroke-width="1.6" stroke-dasharray="4 3"/>
+<text x="283" y="441" class="sans" font-size="12.5" fill="#8b949e">only after your approval</text>
+<circle cx="474" cy="436" r="7" fill="none" stroke="#e3b341" stroke-width="1.8"/><path d="M471 433 l6 6 M477 433 l-6 6" stroke="#e3b341" stroke-width="1.8" stroke-linecap="round"/>
+<text x="493" y="441" class="sans" font-size="12.5" fill="#8b949e">early stop</text>
+<rect x="583" y="428" width="22" height="16" rx="8" fill="#161b22" stroke="#30363d" stroke-dasharray="3 3"/>
+<text x="613" y="441" class="sans" font-size="12.5" fill="#8b949e">thorough mode, or with polish</text>
+</svg>
